@@ -1,5 +1,7 @@
+package entities;
+
 public class SubTask extends Task {
-    int epicId;
+    private final int epicId;
     public SubTask(String name, String description, int epicId) {
         super(name, description);
         this.epicId = epicId;

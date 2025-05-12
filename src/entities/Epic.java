@@ -1,4 +1,7 @@
+package entities;
+
 import java.util.ArrayList;
+import utils.Status;
 
 public class Epic extends Task {
     private final ArrayList<SubTask> subtaskList = new ArrayList<>();
@@ -8,7 +11,7 @@ public class Epic extends Task {
     }
 
     public ArrayList<SubTask> getSubtaskList() {
-        return this.subtaskList;
+        return new ArrayList<>(subtaskList);
     }
 
     public void clearSubtaskList() {
