@@ -20,8 +20,12 @@ public class Epic extends Task {
     }
 
     public void addSubTask(SubTask subTask) {
-        if (subtaskList.contains(subTask)) return;
-        subtaskList.add(subTask);
+        int subTaskIndex = subtaskList.indexOf(subTask);
+        if (subTaskIndex >= 0) {
+            subtaskList.add(subTaskIndex, subTask);
+        } else {
+            subtaskList.add(subTask);
+        }
     }
 
     public void removeSubTask(SubTask subTask) {
