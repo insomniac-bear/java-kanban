@@ -13,17 +13,21 @@ public class Main {
         Task testTask2 = new Task("Test task 1", "Description 1");
         Epic testEpic1 = new Epic("Test epic 1", "Description 1");
         Epic testEpic2 = new Epic("Test epic 2", "Description 2");
-        SubTask testSubTask1 = new SubTask("Test subtask 1 for entities.Epic 1", "Description 1");
-        SubTask testSubTask2 = new SubTask("Test subtask 2 for entities.Epic 1", "Description 2");
-        SubTask testSubTask3 = new SubTask("Test subtask 3 for entities.Epic 2", "Description 3");
-
         taskManager.createTask(testTask1);
         taskManager.createTask(testTask2);
         taskManager.createTask(testEpic1);
         taskManager.createTask(testEpic2);
-        taskManager.createTask(testSubTask1, testEpic1.getId());
-        taskManager.createTask(testSubTask2, testEpic1.getId());
-        taskManager.createTask(testSubTask3, testEpic2.getId());
+
+        SubTask testSubTask1 = new SubTask("Test subtask 1 for entities.Epic 1", "Description 1");
+        testSubTask1.setEpicId(testEpic1.getId());
+        SubTask testSubTask2 = new SubTask("Test subtask 2 for entities.Epic 1", "Description 2");
+        testSubTask2.setEpicId(testEpic1.getId());
+        SubTask testSubTask3 = new SubTask("Test subtask 3 for entities.Epic 2", "Description 3");
+        testSubTask3.setEpicId(testEpic2.getId());
+
+        taskManager.createTask(testSubTask1);
+        taskManager.createTask(testSubTask2);
+        taskManager.createTask(testSubTask3);
 
         printAllTasks(taskManager);
     }

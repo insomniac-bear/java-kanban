@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
-    int idCounter = 0;
+    private int idCounter = 0;
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -89,10 +89,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(SubTask subTask, int epicId) {
+    public void createTask(SubTask subTask) {
         if (subTask == null) {
             return;
         }
+        int epicId = subTask.getEpicId();
         Epic targetEpic = this.epics.get(epicId);
         if (targetEpic == null) {
             return;
@@ -106,19 +107,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task, Integer taskId) {
+    public void updateTask(Task task) {
         if (task == null) {
             return;
         }
-        task.setId(taskId);
-        tasks.put(taskId, task);
+        tasks.put(task.getId(), task);
     }
 
     @Override
-    public void updateTask(Epic epic, Integer epicId) {
+    public void updateTask(Epic epic) {
         if (epic == null) {
             return;
         }
+        int epicId = epic.getId();
         Epic oldEpic = this.getEpic(epicId);
         if (oldEpic.getStatus() != epic.getStatus()) {
             epic.setStatus(oldEpic.getStatus());
@@ -127,11 +128,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(SubTask subTask, Integer subTaskId) {
+    public void updateTask(SubTask subTask) {
         if (subTask == null) {
             return;
         }
-
+        int subTaskId = subTask.getId();
         SubTask oldSubTask = subTasks.get(subTaskId);
         Epic targetEpic = this.getEpic(oldSubTask.getEpicId());
         if (targetEpic == null) {
