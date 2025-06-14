@@ -3,44 +3,70 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 class InMemoryHistoryManagerTest {
-    static private InMemoryTaskManager taskManager;
-    static private Task task;
+    private static InMemoryTaskManager taskManager;
+    private static InMemoryHistoryManager historyManager;
+    private static Task task;
+    private static SubTask subTask;
+    private static Epic epic;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void beforeEach() throws Exception {
         taskManager = Managers.getDefault();
-        Epic epic = new Epic("Epic", "Description");
+        historyManager = Managers.getDefaultHistory();
+        epic = new Epic("Epic", "Description");
         task = new Task("Task", "Description");
-        SubTask subTask = new SubTask("Subtask", "Description");
-        subTask.setEpicId(epic.getId());
-        taskManager.createTask(task);
-        taskManager.createTask(epic);
-        taskManager.createTask(subTask);
+        subTask = new SubTask("Subtask", "Description");
     }
 
     @Test
     void shouldAddTaskInHistory() {
+        taskManager.createTask(task);
         taskManager.getTask(0);
-        ArrayList<Task> history = taskManager.getHistory();
+        List<Task> history = taskManager.getHistory();
         assertNotNull(history, "История не создана");
         assertEquals(1, history.size(), "Количество задач в истории не совпадает с ожидаемым");
         assertEquals(task, history.getFirst(), "Задача сохранена не на свое место");
     }
 
     @Test
-    void shouldHaveOnlyTenTasksInHistory() {
-        for (int i = 0; i < 11; i++) {
+    void shouldHaveOnlyOneUniqueTaskInHistory() {
+        taskManager.createTask(task);
+        for (int i = 0; i < 3; i++) {
             taskManager.getTask(0);
         }
-        ArrayList<Task> history = taskManager.getHistory();
-        assertEquals(10, history.size(), "Количество задач в истории не совпадает с ожидаемым");
+        List<Task> history = taskManager.getHistory();
+        assertEquals(1, history.size(), "Количество задач в истории не совпадает с ожидаемым");
+    }
+
+    @Test
+    void shouldHaveTwoTasksInHistory() {
+        taskManager.createTask(task);
+        taskManager.createTask(epic);
+        subTask.setEpicId(epic.getId());
+        taskManager.createTask(subTask);
+        taskManager.getTask(0);
+        taskManager.getSubTask(2);
+        List<Task> history = taskManager.getHistory();
+        assertEquals(2, history.size(), "Количество задач в истории не совпадает с ожидаемым");
+    }
+
+    @Test
+    void shouldHaveOneTasksInHistoryAfterDeleteFirstHistoryItem() {
+        taskManager.createTask(task);
+        taskManager.createTask(epic);
+        subTask.setEpicId(epic.getId());
+        taskManager.createTask(subTask);
+        taskManager.getTask(0);
+        taskManager.getSubTask(2);
+        List<Task> history = taskManager.getHistory();
+        historyManager.remove(0);
+        assertEquals(2, history.size(), "Количество задач в истории не совпадает с ожидаемым");
     }
 }
