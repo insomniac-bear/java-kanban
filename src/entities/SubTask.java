@@ -2,6 +2,7 @@ package entities;
 
 public class SubTask extends Task {
     private int epicId;
+
     public SubTask(String name, String description) {
         super(name, description);
     }
