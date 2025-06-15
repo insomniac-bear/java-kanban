@@ -46,14 +46,17 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldRemoveAllTasksAndHistory() {
         Task task = new Task("T", "D");
+        Task task1 = new Task("T", "D");
+        Task task2 = new Task("T", "D");
+        Task task3 = new Task("T", "D");
         taskManager.createTask(task);
         taskManager.getTask(task.getId());
-        taskManager.createTask(task);
-        taskManager.getTask(task.getId());
-        taskManager.createTask(task);
-        taskManager.getTask(task.getId());
-        taskManager.createTask(task);
-        taskManager.getTask(task.getId());
+        taskManager.createTask(task1);
+        taskManager.getTask(task1.getId());
+        taskManager.createTask(task2);
+        taskManager.getTask(task2.getId());
+        taskManager.createTask(task3);
+        taskManager.getTask(task3.getId());
         assertEquals(4, taskManager.getTasks().size(), "Количество созданных задач некорректно");
         assertEquals(4, taskManager.getHistory().size(), "В истории не корректное количество задач");
         taskManager.removeTasks();

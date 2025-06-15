@@ -43,6 +43,8 @@ public class Main {
         printHistory(taskManager);
         taskManager.removeEpic(testEpic1.getId());
         printHistory(taskManager);
+        taskManager.removeTasks();
+        printHistory(taskManager);
     }
 
     private static void printAllTasks(TaskManager manager) {
