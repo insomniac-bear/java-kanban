@@ -12,7 +12,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node<Task>> historyMap = new HashMap<>();
     private Node<Task> head;
     private Node<Task> tail;
-    private int size = 0;
 
     @Override
     public void add(Task task) {
@@ -45,7 +44,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail.setNext(newTail);
         }
         tail = newTail;
-        size++;
     }
 
     private List<Task> getTasks() {
@@ -72,6 +70,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             next.setPrev(prev);
         }
-        size--;
     }
 }
