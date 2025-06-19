@@ -3,7 +3,6 @@ import controllers.TaskManager;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
-import utils.Status;
 
 public class Main {
 
@@ -22,14 +21,30 @@ public class Main {
         testSubTask1.setEpicId(testEpic1.getId());
         SubTask testSubTask2 = new SubTask("Test subtask 2 for entities.Epic 1", "Description 2");
         testSubTask2.setEpicId(testEpic1.getId());
-        SubTask testSubTask3 = new SubTask("Test subtask 3 for entities.Epic 2", "Description 3");
-        testSubTask3.setEpicId(testEpic2.getId());
+        SubTask testSubTask3 = new SubTask("Test subtask 3 for entities.Epic 1", "Description 3");
+        testSubTask3.setEpicId(testEpic1.getId());
 
         taskManager.createTask(testSubTask1);
         taskManager.createTask(testSubTask2);
         taskManager.createTask(testSubTask3);
 
         printAllTasks(taskManager);
+
+        taskManager.getTask(testTask1.getId());
+        printHistory(taskManager);
+        taskManager.getTask(testTask2.getId());
+        taskManager.getEpic(testEpic1.getId());
+        printHistory(taskManager);
+        taskManager.getTask(testTask1.getId());
+        taskManager.getSubTask(testSubTask1.getId());
+        taskManager.getSubTask(testSubTask2.getId());
+        printHistory(taskManager);
+        taskManager.getSubTask(testSubTask1.getId());
+        printHistory(taskManager);
+        taskManager.removeEpic(testEpic1.getId());
+        printHistory(taskManager);
+        taskManager.removeTasks();
+        printHistory(taskManager);
     }
 
     private static void printAllTasks(TaskManager manager) {
@@ -50,6 +65,10 @@ public class Main {
             System.out.println(subtask);
         }
 
+        printHistory(manager);
+    }
+
+    private static void printHistory(TaskManager manager) {
         System.out.println("История:");
         for (Task task : manager.getHistory()) {
             System.out.println(task);
