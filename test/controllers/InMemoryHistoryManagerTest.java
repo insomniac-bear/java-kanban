@@ -48,9 +48,9 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldHaveTwoTasksInHistory() {
         taskManager.createTask(task);
-        taskManager.createTask(epic);
+        taskManager.createEpic(epic);
         subTask.setEpicId(epic.getId());
-        taskManager.createTask(subTask);
+        taskManager.createSubtask(subTask);
         taskManager.getTask(0);
         taskManager.getSubTask(2);
         List<Task> history = taskManager.getHistory();
@@ -60,9 +60,9 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldHaveOneTasksInHistoryAfterDeleteFirstHistoryItem() {
         taskManager.createTask(task);
-        taskManager.createTask(epic);
+        taskManager.createEpic(epic);
         subTask.setEpicId(epic.getId());
-        taskManager.createTask(subTask);
+        taskManager.createSubtask(subTask);
         taskManager.getTask(0);
         taskManager.getSubTask(2);
         List<Task> history = taskManager.getHistory();
