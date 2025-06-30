@@ -57,7 +57,7 @@ public class Main {
         System.out.println();
         printHistory(taskManager);
 
-        File data = new FileManager("data.csv").getFile();
+        File data = FileManager.getFile("data.csv");
         FileBackedTaskManager backedTaskManager = Managers.getDefaultFileBackedTaskManager(data);
 
         Task fbTask1 = new Task("fbT0", "fbTD0");

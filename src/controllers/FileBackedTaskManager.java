@@ -1,23 +1,64 @@
 package controllers;
 
-import exceptions.ManagerSaveException;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerSaveException;
 import utils.Status;
 import utils.TaskType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private static final String FILE_HEADER = "id,type,name,status,description,epic";
     File file;
-    static final String FILE_HEADER = "id,type,name,status,description,epic";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
+    }
+
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            while (br.ready()) {
+                String line = br.readLine();
+                if (line.startsWith(FILE_HEADER)) {
+                    continue;
+                }
+
+                String[] taskParts = line.split(",");
+                int id = Integer.parseInt(taskParts[0]);
+                TaskType type = TaskType.valueOf(taskParts[1]);
+                String name = taskParts[2];
+                Status status = Status.valueOf(taskParts[3]);
+                String description = taskParts[4];
+
+                switch (type) {
+                    case TaskType.TASK:
+                        Task task = new Task(name, description, status);
+                        task.setId(id);
+                        manager.createTask(task);
+                        break;
+                    case TaskType.EPIC:
+                        Epic epic = new Epic(name, description, status);
+                        epic.setId(id);
+                        manager.createEpic(epic);
+                        break;
+                    case TaskType.SUBTASK:
+                        SubTask subtask = new SubTask(name, description, status);
+                        subtask.setId(id);
+                        subtask.setEpicId(Integer.parseInt(taskParts[5]));
+                        manager.createSubtask(subtask);
+                        break;
+                    default:
+                        throw new ManagerSaveException("Ошибка чтения из файла. Неизвестный тип задачи");
+                }
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка чтения из файла: " + e.getMessage());
+        }
+        return manager;
     }
 
     @Override
@@ -93,83 +134,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        List<String> allTasks = new ArrayList<>();
-        allTasks.add(FILE_HEADER);
-        for (Task task : this.getTasks()) {
-            allTasks.add(task.toString());
-        }
-
-        for (Epic epic : this.getEpics()) {
-            allTasks.add(epic.toString());
-        }
-
-        for (SubTask subtask : this.getSubTasks()) {
-            allTasks.add(subtask.toString());
-        }
-
         try (Writer out = new FileWriter(this.file, StandardCharsets.UTF_8, false)) {
-            for (String line: allTasks) {
-                out.write(line + "\n");
+            out.write(FILE_HEADER + "\n");
+
+            for (Task task : this.getTasks()) {
+                out.write(task.toString() + "\n");
+            }
+
+            for (Epic epic : this.getEpics()) {
+                out.write(epic.toString() + "\n");
+            }
+
+            for (SubTask subtask : this.getSubTasks()) {
+                out.write(subtask.toString() + "\n");
             }
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка сохранения в файл: " + e.getMessage());
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
-        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            while (br.ready()) {
-                String line = br.readLine();
-                if (line.startsWith(FILE_HEADER)) {
-                    continue;
-                }
-                Task task = createTaskFromString(line);
-                if (task instanceof Epic) {
-                    manager.createEpic((Epic)task);
-                } else if (task instanceof SubTask) {
-                    manager.createSubtask((SubTask) task);
-                } else {
-                    manager.createTask(task);
-                }
-            }
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка чтения из файла: " + e.getMessage());
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return manager;
-    }
-
-    private static Task createTaskFromString(String taskString) {
-        String[] taskParts = taskString.split(",");
-        int id = Integer.parseInt(taskParts[0]);
-        TaskType type = TaskType.valueOf(taskParts[1]);
-        String name = taskParts[2];
-        Status status = Status.valueOf(taskParts[3]);
-        String description = taskParts[4];
-        switch (type) {
-            case TaskType.TASK:
-                Task task = new Task(name, description, status);
-                task.setId(id);
-                return task;
-            case TaskType.EPIC:
-                Epic epic = new Epic(name, description, status);
-                epic.setId(id);
-                return epic;
-            case TaskType.SUBTASK:
-                SubTask subtask = new SubTask(name, description, status);
-                subtask.setId(id);
-                subtask.setEpicId(Integer.parseInt(taskParts[5]));
-                return subtask;
-            default:
-                throw new IllegalArgumentException("Неизвестный тип задачи" + type);
+            throw new ManagerSaveException("Ошибка сохранения в файл: " + e.getMessage());
         }
     }
 }
