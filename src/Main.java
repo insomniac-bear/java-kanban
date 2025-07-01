@@ -70,13 +70,14 @@ public class Main {
         backedTaskManager.createEpic(fbEpic2);
 
         SubTask fbSubTask1 = new SubTask("ST1", "STD1");
-        testSubTask1.setEpicId(fbEpic1.getId());
+        fbSubTask1.setEpicId(fbEpic1.getId());
         SubTask fbSubTask2 = new SubTask("ST2", "STD2");
-        testSubTask2.setEpicId(fbEpic1.getId());
+        fbSubTask2.setEpicId(fbEpic1.getId());
         SubTask fbSubTask3 = new SubTask("ST3", "STD3");
-        testSubTask3.setEpicId(fbEpic2.getId());
+        fbSubTask3.setEpicId(fbEpic2.getId());
 
         backedTaskManager.createSubtask(fbSubTask1);
+        System.out.println(testSubTask1);
         backedTaskManager.createSubtask(fbSubTask2);
         backedTaskManager.createSubtask(fbSubTask3);
 

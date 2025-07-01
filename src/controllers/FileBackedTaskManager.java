@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static final String FILE_HEADER = "id,type,name,status,description,epic";
-    File file;
+    private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -135,18 +135,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer out = new FileWriter(this.file, StandardCharsets.UTF_8, false)) {
-            out.write(FILE_HEADER + "\n");
+            out.write(FILE_HEADER + System.lineSeparator());
 
             for (Task task : this.getTasks()) {
-                out.write(task.toString() + "\n");
+                out.write(task.toString() + System.lineSeparator());
             }
 
             for (Epic epic : this.getEpics()) {
-                out.write(epic.toString() + "\n");
+                out.write(epic.toString() + System.lineSeparator());
             }
 
             for (SubTask subtask : this.getSubTasks()) {
-                out.write(subtask.toString() + "\n");
+                out.write(subtask.toString() + System.lineSeparator());
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения в файл: " + e.getMessage());
