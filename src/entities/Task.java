@@ -2,9 +2,10 @@ package entities;
 
 import java.util.Objects;
 import utils.Status;
+import utils.TaskType;
 
 public class Task {
-    private int id;
+    private int id = -1;
     private final String name;
     private Status status;
     private final String description;
@@ -13,6 +14,12 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+    }
+
+    public Task(String name, String description, Status status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
     }
 
     @Override
@@ -30,12 +37,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "entities.Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                ", description='" + description + '\'' +
-                '}';
+        return id + "," + TaskType.TASK + "," + name + "," + status + "," + description + ",";
     }
 
     public void setStatus(Status status) {

@@ -2,12 +2,17 @@ package entities;
 
 import java.util.ArrayList;
 import utils.Status;
+import utils.TaskType;
 
 public class Epic extends Task {
     private final ArrayList<SubTask> subtaskList = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
+    }
+
+    public Epic(String name, String description, Status status) {
+        super(name, description, status);
     }
 
     public ArrayList<SubTask> getSubtaskList() {
@@ -56,5 +61,14 @@ public class Epic extends Task {
         } else {
             setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public String toString() {
+        String typeName = String.valueOf(TaskType.TASK);
+        StringBuilder sb = new StringBuilder(super.toString());
+        int idx = sb.indexOf(typeName);
+        sb.replace(idx, idx + typeName.length(), String.valueOf(TaskType.EPIC));
+        return sb.toString();
     }
 }
