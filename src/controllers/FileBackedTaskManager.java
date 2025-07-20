@@ -11,7 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private static final String FILE_HEADER = "id,type,name,status,description,epic";
+    private static final String FILE_HEADER = "id,type,name,status,description,startTime,duration,epic";
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -33,10 +33,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String name = taskParts[2];
                 Status status = Status.valueOf(taskParts[3]);
                 String description = taskParts[4];
+                String start = taskParts[5] != null ? taskParts[5] : "";
+                String duration = taskParts[6] != null ? taskParts[6] : "";
 
                 switch (type) {
                     case TaskType.TASK:
-                        Task task = new Task(name, description, status);
+                        Task task = new Task(name, description, status, start, duration);
                         task.setId(id);
                         manager.createTask(task);
                         break;
@@ -46,9 +48,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         manager.createEpic(epic);
                         break;
                     case TaskType.SUBTASK:
-                        SubTask subtask = new SubTask(name, description, status);
+                        SubTask subtask = new SubTask(name, description, status, start, duration);
                         subtask.setId(id);
-                        subtask.setEpicId(Integer.parseInt(taskParts[5]));
+                        int epicId = taskParts.length > 6 ? Integer.parseInt(taskParts[7]) : null;
+                        subtask.setEpicId(epicId);
                         manager.createSubtask(subtask);
                         break;
                     default:
@@ -136,7 +139,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private void save() {
         try (Writer out = new FileWriter(this.file, StandardCharsets.UTF_8, false)) {
             out.write(FILE_HEADER + System.lineSeparator());
-
             for (Task task : this.getTasks()) {
                 out.write(task.toString() + System.lineSeparator());
             }
