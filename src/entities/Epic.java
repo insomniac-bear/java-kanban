@@ -83,7 +83,7 @@ public class Epic extends Task {
         if (!subtaskList.contains(subTask)) return;
         subtaskList.remove(subTask);
 
-        if(subtaskList.isEmpty()) {
+        if (subtaskList.isEmpty()) {
             this.startTime = null;
             this.endTime = null;
             this.duration = null;
