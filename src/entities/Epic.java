@@ -24,11 +24,15 @@ public class Epic extends Task {
     }
 
     private LocalDateTime getSubtaskMinStartTime() {
-        return Collections.min(subtaskList, Comparator.comparing(Task::getStartTime)).getStartTime();
+        return !subtaskList.isEmpty()
+                ? Collections.min(subtaskList, Comparator.comparing(Task::getStartTime)).getStartTime()
+                : null;
     }
 
     private LocalDateTime getSubtaskMaxEndTime() {
-        return Collections.max(subtaskList, Comparator.comparing(Task::getEndTime)).getEndTime();
+        return !subtaskList.isEmpty()
+                ? Collections.max(subtaskList, Comparator.comparing(Task::getEndTime)).getEndTime()
+                : null;
     }
 
     public ArrayList<SubTask> getSubtaskList() {
@@ -53,7 +57,7 @@ public class Epic extends Task {
 
             this.duration = subTask.getDuration();
             this.startTime = subTask.getStartTime();
-            this.endTime = this.startTime.plus(subTask.getDuration());
+            this.endTime = subTask.getEndTime();
             return;
         }
 

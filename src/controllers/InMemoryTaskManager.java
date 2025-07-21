@@ -14,7 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final Set<Task> prioritizedTasks = new TreeSet<>(
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(
             Comparator.comparing(
                     Task::getStartTime,
                     Comparator.naturalOrder()
@@ -28,20 +28,20 @@ public class InMemoryTaskManager implements TaskManager {
 
         return getPrioritizedTasks().stream()
                 .filter(task -> !task.equals(newTask))
-                .anyMatch(task -> this.isTaskCrossing(newTask, task));
+                .anyMatch(task -> isTaskCrossing(newTask, task));
     }
 
-    private boolean isDateBefore(LocalDateTime date1, LocalDateTime date2) {
+    static private boolean isDateBefore(LocalDateTime date1, LocalDateTime date2) {
         return date1 != null && date2 != null && date1.isBefore(date2);
     }
 
-    private boolean isTaskCrossing(Task task1, Task task2) {
+    static private boolean isTaskCrossing(Task task1, Task task2) {
         return isDateBefore(task2.getStartTime(), task1.getEndTime())
                 && isDateBefore(task1.getStartTime(), task2.getEndTime());
     }
 
     @Override
-    public Set<Task> getPrioritizedTasks() {
+    public TreeSet<Task> getPrioritizedTasks() {
         return this.prioritizedTasks;
     }
 
@@ -229,6 +229,7 @@ public class InMemoryTaskManager implements TaskManager {
         subTask.setId(subTaskId);
         subTasks.put(subTaskId, subTask);
         prioritizedTasks.remove(subTask);
+        targetEpic.removeSubTask(subTask);
         targetEpic.addSubTask(subTask);
         targetEpic.calculateStatus();
         if (subTask.getStartTime() != null) {
