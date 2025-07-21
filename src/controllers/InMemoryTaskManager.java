@@ -31,11 +31,11 @@ public class InMemoryTaskManager implements TaskManager {
                 .anyMatch(task -> isTaskCrossing(newTask, task));
     }
 
-    static private boolean isDateBefore(LocalDateTime date1, LocalDateTime date2) {
+    private static boolean isDateBefore(LocalDateTime date1, LocalDateTime date2) {
         return date1 != null && date2 != null && date1.isBefore(date2);
     }
 
-    static private boolean isTaskCrossing(Task task1, Task task2) {
+    private static boolean isTaskCrossing(Task task1, Task task2) {
         return isDateBefore(task2.getStartTime(), task1.getEndTime())
                 && isDateBefore(task1.getStartTime(), task2.getEndTime());
     }
