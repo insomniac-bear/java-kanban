@@ -6,6 +6,7 @@ import entities.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     ArrayList<Epic> getEpics();
@@ -47,4 +48,6 @@ public interface TaskManager {
     ArrayList<SubTask> getEpicSubTasks(int epicId);
 
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
 }

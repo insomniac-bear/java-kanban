@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +40,7 @@ class FileBackedTaskManagerTest {
     @Test
     @DisplayName("Корректное сохранение Task")
     void shouldSaveTask() throws IOException {
-        Task task = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         manager.createTask(task);
         Task savedTask = manager.getTask(task.getId());
 
@@ -54,7 +56,7 @@ class FileBackedTaskManagerTest {
     void shouldSaveEpicAndSubtask() throws IOException {
         Epic epic = new Epic("E", "D");
         manager.createEpic(epic);
-        SubTask subTask = new SubTask("ST", "D");
+        SubTask subTask = new SubTask("ST", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
         manager.createSubtask(subTask);
         Epic savedEpic = manager.getEpic(0);

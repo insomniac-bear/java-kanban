@@ -3,15 +3,18 @@ package entities;
 import utils.Status;
 import utils.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class SubTask extends Task {
     private int epicId;
 
-    public SubTask(String name, String description) {
-        super(name, description);
+    public SubTask(String name, String description, LocalDateTime startTime, Duration duration) {
+        super(name, description, startTime, duration);
     }
 
-    public SubTask(String name, String description, Status status) {
-        super(name, description, status);
+    public SubTask(String name, String description, Status status, String startTime, String duration) {
+        super(name, description, status, startTime, duration);
     }
 
     public void setEpicId(int epicId) {
@@ -28,7 +31,7 @@ public class SubTask extends Task {
         StringBuilder sb = new StringBuilder(super.toString());
         int idx = sb.indexOf(typeName);
         sb.replace(idx, idx + typeName.length(), String.valueOf(TaskType.SUBTASK));
-        sb.append(epicId);
+        sb.append(",").append(epicId);
         return sb.toString();
     }
 }

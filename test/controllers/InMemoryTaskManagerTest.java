@@ -3,10 +3,14 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerSaveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.Status;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +20,7 @@ class InMemoryTaskManagerTest {
     InMemoryHistoryManager historyManager;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws IOException, ManagerSaveException {
         taskManager = Managers.getDefault();
         historyManager = Managers.getDefaultHistory();
     }
@@ -29,26 +33,24 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnSubTaskList() {
-        Epic epic = new Epic("E", "D");
-        SubTask subTask = new SubTask("S", "D");
-        taskManager.createSubtask(subTask);
-        assertNotNull(taskManager.getSubTasks(), "Возвращен Null");
+    void shouldReturnExceptionThanSaveSubtaskWithoutEpicId() {
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.now(), Duration.ofMinutes(15));
+        assertThrows(ManagerSaveException.class, () -> taskManager.createSubtask(subTask), "Эпик с id 0 не найден");
     }
 
     @Test
     void shouldReturnTaskList() {
-        Task task = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         assertNotNull(taskManager.getTasks(), "Возвращен Null");
     }
 
     @Test
     void shouldRemoveAllTasksAndHistory() {
-        Task task = new Task("T", "D");
-        Task task1 = new Task("T", "D");
-        Task task2 = new Task("T", "D");
-        Task task3 = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
+        Task task1 = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
+        Task task2 = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 30, 0), Duration.ofMinutes(15));
+        Task task3 = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 45, 0), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.getTask(task.getId());
         taskManager.createTask(task1);
@@ -90,13 +92,13 @@ class InMemoryTaskManagerTest {
         taskManager.getEpic(epic.getId());
         taskManager.createEpic(epic2);
         taskManager.getEpic(epic2.getId());
-        SubTask subTask = new SubTask("S", "D");
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
-        SubTask subTask2 = new SubTask("S", "D");
+        SubTask subTask2 = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         subTask2.setEpicId(epic.getId());
-        SubTask subTask3 = new SubTask("S", "D");
+        SubTask subTask3 = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 30, 0), Duration.ofMinutes(15));
         subTask3.setEpicId(epic2.getId());
-        SubTask subTask4 = new SubTask("S", "D");
+        SubTask subTask4 = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 45, 0), Duration.ofMinutes(15));
         subTask4.setEpicId(epic2.getId());
         taskManager.createSubtask(subTask);
         taskManager.getSubTask(subTask.getId());
@@ -117,8 +119,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldReturnCorrectTask() {
-        Task task = new Task("T", "D");
-        Task task2 = new Task("T2", "D2");
+        Task task = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
+        Task task2 = new Task("T2", "D2", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.createTask(task2);
         assertEquals(task, taskManager.getTask(task.getId()), "Получена некорректная задача");
@@ -140,8 +142,8 @@ class InMemoryTaskManagerTest {
         Epic epic2 = new Epic("E2", "D2");
         taskManager.createEpic(epic);
         taskManager.createEpic(epic2);
-        SubTask subTask = new SubTask("S", "D");
-        SubTask subTask2 = new SubTask("S2", "D2");
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
+        SubTask subTask2 = new SubTask("S2", "D2", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         taskManager.createSubtask(subTask);
         taskManager.createSubtask(subTask2);
         assertEquals(subTask2, taskManager.getSubTask(subTask2.getId()), "Получена некорректная подзадача");
@@ -149,9 +151,9 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldReturnUpdatedTask() {
-        Task task = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
-        Task updatedTask = new Task("NT", "ND");
+        Task updatedTask = new Task("NT", "ND", LocalDateTime.now(), Duration.ofMinutes(15));
         updatedTask.setStatus(Status.IN_PROGRESS);
         updatedTask.setId(task.getId());
         taskManager.updateTask(updatedTask);
@@ -175,10 +177,10 @@ class InMemoryTaskManagerTest {
     void shouldUpdateSubtaskAndUpdateEpicsStatus() {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("S", "D");
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
         taskManager.createSubtask(subTask);
-        SubTask updatedSubTask = new SubTask("US", "UD");
+        SubTask updatedSubTask = new SubTask("US", "UD", LocalDateTime.now(), Duration.ofMinutes(15));
         updatedSubTask.setId(subTask.getId());
         updatedSubTask.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(updatedSubTask);
@@ -190,7 +192,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void removeTask() {
-        Task task = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.getTask(task.getId());
         assertEquals(1, taskManager.getTasks().size(), "Задача не создана");
@@ -204,7 +206,7 @@ class InMemoryTaskManagerTest {
     void removeEpic() {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("ST", "STD");
+        SubTask subTask = new SubTask("ST", "STD", LocalDateTime.now(), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
         taskManager.createSubtask(subTask);
         taskManager.getEpic(epic.getId());
@@ -221,14 +223,14 @@ class InMemoryTaskManagerTest {
     void removeSubtask() {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("S", "D");
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
-        SubTask subTask2 = new SubTask("S2", "D2");
+        SubTask subTask2 = new SubTask("S2", "D2",LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         subTask2.setEpicId(epic.getId());
         taskManager.createSubtask(subTask);
         taskManager.getSubTask(subTask.getId());
         taskManager.createSubtask(subTask2);
-        SubTask updatedSubTask = new SubTask("US", "UD");
+        SubTask updatedSubTask = new SubTask("US", "UD", LocalDateTime.now(), Duration.ofMinutes(15));
         updatedSubTask.setId(subTask.getId());
         updatedSubTask.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(updatedSubTask);
@@ -245,8 +247,8 @@ class InMemoryTaskManagerTest {
     void getEpicSubTasks() {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
-        SubTask subTask = new SubTask("S", "D");
-        SubTask subTask2 = new SubTask("S2", "D2");
+        SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
+        SubTask subTask2 = new SubTask("S2", "D2", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         subTask.setEpicId(epic.getId());
         subTask2.setEpicId(epic.getId());
         taskManager.createSubtask(subTask);
@@ -259,7 +261,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void getHistory() {
-        Task task = new Task("T", "D");
+        Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.getTask(task.getId());
         assertEquals(1, taskManager.getHistory().size(), "История некорректна");
