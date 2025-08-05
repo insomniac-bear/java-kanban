@@ -13,8 +13,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class BaseHttpHandler {
-    protected final Charset UTF_8 = StandardCharsets.UTF_8;
-    protected final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    protected static final Charset UTF_8 = StandardCharsets.UTF_8;
+    protected static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     protected final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
