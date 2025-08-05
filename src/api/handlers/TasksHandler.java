@@ -32,47 +32,47 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     try {
                         List<Task> tasks = taskManager.getTasks();
                         String tasksJson = gson.toJson(tasks);
-                        this.sendSuccess(httpExchange, tasksJson);
+                        sendSuccess(httpExchange, tasksJson);
                     } catch (ManagerGetException e) {
-                        this.sendNotFound(httpExchange, e.getMessage());
+                        sendNotFound(httpExchange, e.getMessage());
                     }
                 } else {
                     try {
                         Task task = taskManager.getTask(Integer.parseInt(urlParts[2]));
                         String taskJson = gson.toJson(task);
-                        this.sendSuccess(httpExchange, taskJson);
+                        sendSuccess(httpExchange, taskJson);
                     } catch (ManagerGetException e) {
-                        this.sendNotFound(httpExchange, e.getMessage());
+                        sendNotFound(httpExchange, e.getMessage());
                     }
                 }
                 break;
             case HttpMethod.POST:
                 try {
                     InputStream inputStream = httpExchange.getRequestBody();
-                    String body = new String(inputStream.readAllBytes(), this.UTF_8);
+                    String body = new String(inputStream.readAllBytes(), UTF_8);
                     Task newTask = gson.fromJson(body, Task.class);
 
                     if (newTask.getId() == null) {
                         taskManager.createTask(newTask);
-                        this.sendCreate(httpExchange, "Задача успешно создана");
+                        sendCreate(httpExchange, "Задача успешно создана");
                     } else {
                         taskManager.updateTask(newTask);
-                        this.sendCreate(httpExchange, "Задача успешно обновлена");
+                        sendCreate(httpExchange, "Задача успешно обновлена");
                     }
                 } catch (ManagerSaveException e) {
-                    this.sendHasIntersection(httpExchange);
+                    sendHasIntersection(httpExchange);
                 }
                 break;
             case HttpMethod.DELETE:
                 try {
                     taskManager.removeTask(Integer.parseInt(urlParts[2]));
-                    this.sendSuccess(httpExchange, "Задача успешно удалена");
+                    sendSuccess(httpExchange, "Задача успешно удалена");
                 } catch (ManagerGetException e) {
-                    this.sendNotFound(httpExchange, e.getMessage());
+                    sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
             default:
-                this.sendNotAllowed(httpExchange);
+                sendNotAllowed(httpExchange);
         }
     }
 }

@@ -26,10 +26,10 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
             case HttpMethod.GET:
                 Set<Task> taskSet = taskManager.getPrioritizedTasks();
                 String taskSetJson = gson.toJson(taskSet);
-                this.sendSuccess(httpExchange, taskSetJson);
+                sendSuccess(httpExchange, taskSetJson);
                 break;
             default:
-                this.sendNotAllowed(httpExchange);
+                sendNotAllowed(httpExchange);
         }
 
     }

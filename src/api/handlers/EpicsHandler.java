@@ -33,53 +33,53 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                 if (urlParts.length < 3) {
                     ArrayList<Epic> epics = taskManager.getEpics();
                     String epicsJson = gson.toJson(epics);
-                    this.sendSuccess(httpExchange, epicsJson);
+                    sendSuccess(httpExchange, epicsJson);
                 } else if (urlParts.length < 4) {
                     try {
                         Epic epic = taskManager.getEpic(Integer.parseInt(urlParts[2]));
                         String epicsJson = gson.toJson(epic);
-                        this.sendSuccess(httpExchange, epicsJson);
+                        sendSuccess(httpExchange, epicsJson);
                     } catch (ManagerGetException e) {
-                        this.sendNotFound(httpExchange, e.getMessage());
+                        sendNotFound(httpExchange, e.getMessage());
                     }
                 } else {
                     try {
                         ArrayList<SubTask> subtaskList = taskManager.getEpicSubTasks(Integer.parseInt(urlParts[2]));
                         String subtaskListJson = gson.toJson(subtaskList);
-                        this.sendSuccess(httpExchange, subtaskListJson);
+                        sendSuccess(httpExchange, subtaskListJson);
                     } catch (ManagerGetException e) {
-                        this.sendNotFound(httpExchange, e.getMessage());
+                        sendNotFound(httpExchange, e.getMessage());
                     }
                 }
                 break;
             case HttpMethod.POST:
                 try {
                     InputStream inputStream = httpExchange.getRequestBody();
-                    String body = new String(inputStream.readAllBytes(), this.UTF_8);
+                    String body = new String(inputStream.readAllBytes(), UTF_8);
                     TaskDTO rawTask = gson.fromJson(body, TaskDTO.class);
                     Epic epic = new Epic(rawTask.getName(), rawTask.getDescription());
                     if (rawTask.getId() != null) {
                         epic.setId(rawTask.getId());
                         taskManager.updateTask(epic);
-                        this.sendSuccess(httpExchange, "Эпик успешно обновлен");
+                        BaseHttpHandler.sendSuccess(httpExchange, "Эпик успешно обновлен");
                     } else {
                         taskManager.createEpic(epic);
-                        this.sendCreate(httpExchange, "Эпик успешно создан");
+                        sendCreate(httpExchange, "Эпик успешно создан");
                     }
                 } catch (ManagerSaveException e) {
-                    this.sendNotFound(httpExchange, e.getMessage());
+                    sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
             case HttpMethod.DELETE:
                 try {
                     taskManager.removeEpic(Integer.parseInt(urlParts[2]));
-                    this.sendSuccess(httpExchange, "Эпик успешно удален");
+                    sendSuccess(httpExchange, "Эпик успешно удален");
                 } catch (ManagerGetException e) {
-                    this.sendNotFound(httpExchange, e.getMessage());
+                    sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
             default:
-                this.sendNotAllowed(httpExchange);
+                sendNotAllowed(httpExchange);
         }
     }
 }

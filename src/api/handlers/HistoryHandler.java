@@ -23,10 +23,10 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
             case HttpMethod.GET:
                 List<Task> history = taskManager.getHistory();
                 String historyJson = gson.toJson(history);
-                this.sendSuccess(httpExchange, historyJson);
+                BaseHttpHandler.sendSuccess(httpExchange, historyJson);
                 break;
             default:
-                this.sendNotAllowed(httpExchange);
+                BaseHttpHandler.sendNotAllowed(httpExchange);
         }
     }
 }

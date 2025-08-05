@@ -32,21 +32,21 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 if (urlParts.length < 3) {
                     ArrayList<SubTask> subTasks = taskManager.getSubTasks();
                     String subtasksJson = gson.toJson(subTasks);
-                    this.sendSuccess(httpExchange, subtasksJson);
+                    BaseHttpHandler.sendSuccess(httpExchange, subtasksJson);
                 } else {
                     try {
                         SubTask subtask = taskManager.getSubTask(Integer.parseInt(urlParts[2]));
                         String subtaskJson = gson.toJson(subtask);
-                        this.sendSuccess(httpExchange, subtaskJson);
+                        BaseHttpHandler.sendSuccess(httpExchange, subtaskJson);
                     } catch (ManagerGetException e) {
-                        this.sendNotFound(httpExchange, e.getMessage());
+                        BaseHttpHandler.sendNotFound(httpExchange, e.getMessage());
                     }
                 }
                 break;
             case HttpMethod.POST:
                 try {
                     InputStream inputStream = httpExchange.getRequestBody();
-                    String body = new String(inputStream.readAllBytes(), this.UTF_8);
+                    String body = new String(inputStream.readAllBytes(), UTF_8);
                     TaskDTO rawTask = gson.fromJson(body, TaskDTO.class);
                     SubTask subTask = new SubTask(rawTask.getName(), rawTask.getDescription(), rawTask.getStartTime(),
                             rawTask.getDuration());
@@ -54,25 +54,25 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                     if (rawTask.getId() != null) {
                         subTask.setId(rawTask.getId());
                         taskManager.updateTask(subTask);
-                        this.sendSuccess(httpExchange, "Подзадача успешно обновлена");
+                        sendSuccess(httpExchange, "Подзадача успешно обновлена");
                     } else {
                         taskManager.createSubtask(subTask);
-                        this.sendCreate(httpExchange, "Подзадача успешно создана");
+                        sendCreate(httpExchange, "Подзадача успешно создана");
                     }
                 } catch (ManagerSaveException e) {
-                    this.sendNotFound(httpExchange, e.getMessage());
+                    sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
             case HttpMethod.DELETE:
                 try {
                     taskManager.removeSubtask(Integer.parseInt(urlParts[2]));
-                    this.sendSuccess(httpExchange, "Подзадача успешно удалена");
+                    sendSuccess(httpExchange, "Подзадача успешно удалена");
                 } catch (ManagerGetException e) {
-                    this.sendNotFound(httpExchange, e.getMessage());
+                    sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
             default:
-                this.sendNotAllowed(httpExchange);
+                sendNotAllowed(httpExchange);
         }
     }
 }
