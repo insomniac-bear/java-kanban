@@ -6,6 +6,7 @@ import controllers.TaskManager;
 import entities.Task;
 import exceptions.ManagerGetException;
 import exceptions.ManagerSaveException;
+import utils.HttpMethod;
 import utils.RequestParams;
 
 import java.io.IOException;
@@ -25,8 +26,8 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         String method = params.getMethod();
         String[] urlParts = params.getUrlParts();
 
-        switch (method) {
-            case "GET":
+        switch (HttpMethod.valueOf(method)) {
+            case HttpMethod.GET:
                 if (urlParts.length < 3) {
                     try {
                         List<Task> tasks = taskManager.getTasks();
@@ -45,7 +46,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 }
                 break;
-            case "POST":
+            case HttpMethod.POST:
                 try {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), this.UTF_8);
@@ -62,7 +63,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     this.sendHasIntersection(httpExchange);
                 }
                 break;
-            case "DELETE":
+            case HttpMethod.DELETE:
                 try {
                     taskManager.removeTask(Integer.parseInt(urlParts[2]));
                     this.sendSuccess(httpExchange, "Задача успешно удалена");

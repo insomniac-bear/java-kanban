@@ -7,6 +7,7 @@ import entities.SubTask;
 import exceptions.ManagerGetException;
 import exceptions.ManagerSaveException;
 import api.handlers.dto.TaskDTO;
+import utils.HttpMethod;
 import utils.RequestParams;
 
 import java.io.IOException;
@@ -26,8 +27,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         String method = params.getMethod();
         String[] urlParts = params.getUrlParts();
 
-        switch (method) {
-            case "GET":
+        switch (HttpMethod.valueOf(method)) {
+            case HttpMethod.GET:
                 if (urlParts.length < 3) {
                     ArrayList<SubTask> subTasks = taskManager.getSubTasks();
                     String subtasksJson = gson.toJson(subTasks);
@@ -42,7 +43,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                     }
                 }
                 break;
-            case "POST":
+            case HttpMethod.POST:
                 try {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), this.UTF_8);
@@ -62,7 +63,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                     this.sendNotFound(httpExchange, e.getMessage());
                 }
                 break;
-            case "DELETE":
+            case HttpMethod.DELETE:
                 try {
                     taskManager.removeSubtask(Integer.parseInt(urlParts[2]));
                     this.sendSuccess(httpExchange, "Подзадача успешно удалена");

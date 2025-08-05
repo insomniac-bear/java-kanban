@@ -4,13 +4,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import controllers.TaskManager;
 import entities.Task;
+import utils.HttpMethod;
 import utils.RequestParams;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
-    TaskManager taskManager;
+    private final TaskManager taskManager;
 
     public PrioritizedHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
@@ -21,8 +22,8 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
         RequestParams params = new RequestParams(httpExchange);
         String method = params.getMethod();
 
-        switch (method) {
-            case "GET":
+        switch (HttpMethod.valueOf(method)) {
+            case HttpMethod.GET:
                 Set<Task> taskSet = taskManager.getPrioritizedTasks();
                 String taskSetJson = gson.toJson(taskSet);
                 this.sendSuccess(httpExchange, taskSetJson);
