@@ -3,6 +3,7 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerGetException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,11 @@ public interface TaskManager {
 
     void removeSubTasks();
 
-    Task getTask(int id);
+    Task getTask(int id) throws ManagerGetException;
 
-    Epic getEpic(int id);
+    Epic getEpic(int id) throws ManagerGetException;
 
-    SubTask getSubTask(int id);
+    SubTask getSubTask(int id) throws ManagerGetException;
 
     void createTask(Task task);
 
@@ -33,19 +34,19 @@ public interface TaskManager {
 
     void createSubtask(SubTask subTask);
 
-    void updateTask(Task task);
+    void updateTask(Task task) throws ManagerGetException;
 
-    void updateTask(Epic epic);
+    void updateTask(Epic epic) throws ManagerGetException;
 
-    void updateTask(SubTask subTask);
+    void updateTask(SubTask subTask) throws ManagerGetException;
 
-    void removeTask(int id);
+    void removeTask(int id) throws ManagerGetException;
 
-    void removeEpic(int id);
+    void removeEpic(int id) throws ManagerGetException;
 
-    void removeSubtask(int id);
+    void removeSubtask(int id) throws ManagerGetException;
 
-    ArrayList<SubTask> getEpicSubTasks(int epicId);
+    ArrayList<SubTask> getEpicSubTasks(int epicId) throws ManagerGetException;
 
     List<Task> getHistory();
 

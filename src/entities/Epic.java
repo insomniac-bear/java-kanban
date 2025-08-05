@@ -10,17 +10,17 @@ import utils.Status;
 import utils.TaskType;
 
 public class Epic extends Task {
-    private final ArrayList<SubTask> subtaskList = new ArrayList<>();
+    private final ArrayList<SubTask> subtaskList;
     private LocalDateTime endTime;
-    private LocalDateTime startTime;
-    private Duration duration;
 
     public Epic(String name, String description) {
-        super(name, description, null, null);
+        super(name, description);
+        this.subtaskList = new ArrayList<>();
     }
 
     public Epic(String name, String description, Status status) {
         super(name, description, status, null, null);
+        this.subtaskList = new ArrayList<>();
     }
 
     private LocalDateTime getSubtaskMinStartTime() {
@@ -131,26 +131,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String stringTime = this.startTime != null ? this.startTime.toString() : "";
-        String stringDuration = this.duration != null ? String.valueOf(this.duration.toMinutes())  : "";
         String typeName = String.valueOf(TaskType.TASK);
         StringBuilder sb = new StringBuilder(super.toString());
         int idx = sb.indexOf(typeName);
-        sb.replace(idx, idx + typeName.length(), String.valueOf(TaskType.EPIC))
-                .append(stringTime)
-                .append(",")
-                .append(stringDuration);
+        sb.replace(idx, idx + typeName.length(), String.valueOf(TaskType.EPIC));
         return sb.toString();
-    }
-
-    @Override
-    public Duration getDuration() {
-        return this.duration;
-    }
-
-    @Override
-    public LocalDateTime getStartTime() {
-        return this.startTime;
     }
 
     @Override
