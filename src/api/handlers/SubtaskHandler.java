@@ -47,8 +47,8 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), this.UTF_8);
                     TaskDTO rawTask = gson.fromJson(body, TaskDTO.class);
-                    SubTask subTask = new SubTask(rawTask.getName(), rawTask.getDescription(), rawTask.getStartTime()
-                            , rawTask.getDuration());
+                    SubTask subTask = new SubTask(rawTask.getName(), rawTask.getDescription(), rawTask.getStartTime(),
+                            rawTask.getDuration());
                     subTask.setEpicId(rawTask.getEpicId());
                     if (rawTask.getId() != null) {
                         subTask.setId(rawTask.getId());
