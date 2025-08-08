@@ -3,55 +3,38 @@ package entities;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 import utils.Status;
 import utils.TaskType;
 
 public class Task {
-    private int id = -1;
+    private Integer id = null;
     private final String name;
     private Status status;
     private final String description;
-    private final Duration duration;
-    private final LocalDateTime startTime;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    private Task(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = status;
-        this.startTime = startTime;
-        this.duration = duration;
+        this.status  = Status.NEW;
     }
 
     public Task(String name, String description, LocalDateTime startTime, Duration duration) {
-        this(name, description, Status.NEW, startTime, duration);
+        this.name = name;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.status  = Status.NEW;
     }
 
     public Task(String name, String description, Status status, String startTime, String duration) {
-        this(name, description, status, Optional.ofNullable(startTime).map(LocalDateTime::parse).orElse(null),
-                Optional.ofNullable(duration).map(Long::parseLong).map(Duration::ofMinutes).orElse(null));
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return id == task.id;
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        String stringStartTime = startTime != null ? startTime + "," : "";
-        String stringDuration = duration != null ? String.valueOf(duration.toMinutes()) : "";
-
-        return id + "," + TaskType.TASK + "," + name + "," + status + "," + description + "," + stringStartTime + stringDuration;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime != null ? LocalDateTime.parse(startTime) : null;
+        this.duration = duration != null ? Duration.ofMinutes(Long.parseLong(duration)) : null;
     }
 
     public void setStatus(Status status) {
@@ -66,7 +49,7 @@ public class Task {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -86,4 +69,24 @@ public class Task {
         return this.duration;
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        String stringStartTime = startTime != null ? startTime + "," : "null,";
+        String stringDuration = duration != null ? String.valueOf(duration.toMinutes()) : "null";
+
+        return id + "," + TaskType.TASK + "," + name + "," + status + "," + description + "," + stringStartTime + stringDuration;
+    }
 }

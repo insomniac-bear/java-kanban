@@ -3,6 +3,7 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerGetException;
 import exceptions.ManagerSaveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldRemoveAllTasksAndHistory() {
+    void shouldRemoveAllTasksAndHistory() throws ManagerGetException {
         Task task = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
         Task task1 = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         Task task2 = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 30, 0), Duration.ofMinutes(15));
@@ -67,7 +68,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldRemoveAllEpics() {
+    void shouldRemoveAllEpics() throws ManagerGetException {
         Epic epic = new Epic("T", "D");
         Epic epic1 = new Epic("T", "D");
         Epic epic2 = new Epic("T", "D");
@@ -85,7 +86,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void removeSubTasks() {
+    void removeSubTasks() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         Epic epic2 = new Epic("E2", "D2");
         taskManager.createEpic(epic);
@@ -118,7 +119,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnCorrectTask() {
+    void shouldReturnCorrectTask() throws ManagerGetException {
         Task task = new Task("T", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
         Task task2 = new Task("T2", "D2", LocalDateTime.of(2025, 1, 1, 0, 15, 0), Duration.ofMinutes(15));
         taskManager.createTask(task);
@@ -127,7 +128,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnCorrectEpic() {
+    void shouldReturnCorrectEpic() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         Epic epic2 = new Epic("E2", "D2");
         taskManager.createEpic(epic);
@@ -137,7 +138,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnCorrectSubTask() {
+    void shouldReturnCorrectSubTask() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         Epic epic2 = new Epic("E2", "D2");
         taskManager.createEpic(epic);
@@ -150,7 +151,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnUpdatedTask() {
+    void shouldReturnUpdatedTask() throws ManagerGetException {
         Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         Task updatedTask = new Task("NT", "ND", LocalDateTime.now(), Duration.ofMinutes(15));
@@ -161,7 +162,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnUpdatedEpicAndNotUpdatedStatus() {
+    void shouldReturnUpdatedEpicAndNotUpdatedStatus() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
         Epic updatedEpic = new Epic("UE", "UD");
@@ -174,7 +175,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldUpdateSubtaskAndUpdateEpicsStatus() {
+    void shouldUpdateSubtaskAndUpdateEpicsStatus() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
         SubTask subTask = new SubTask("S", "D", LocalDateTime.now(), Duration.ofMinutes(15));
@@ -191,7 +192,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void removeTask() {
+    void removeTask() throws ManagerGetException {
         Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.getTask(task.getId());
@@ -203,7 +204,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void removeEpic() {
+    void removeEpic() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
         SubTask subTask = new SubTask("ST", "STD", LocalDateTime.now(), Duration.ofMinutes(15));
@@ -220,7 +221,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void removeSubtask() {
+    void removeSubtask() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
         SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
@@ -244,7 +245,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void getEpicSubTasks() {
+    void getEpicSubTasks() throws ManagerGetException {
         Epic epic = new Epic("E", "D");
         taskManager.createEpic(epic);
         SubTask subTask = new SubTask("S", "D", LocalDateTime.of(2025, 1, 1, 0, 0, 0), Duration.ofMinutes(15));
@@ -260,7 +261,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void getHistory() {
+    void getHistory() throws ManagerGetException {
         Task task = new Task("T", "D", LocalDateTime.now(), Duration.ofMinutes(15));
         taskManager.createTask(task);
         taskManager.getTask(task.getId());

@@ -3,6 +3,7 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerGetException;
 import exceptions.ManagerSaveException;
 import utils.Status;
 import utils.TaskType;
@@ -101,7 +102,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws ManagerGetException {
         super.updateTask(task);
         this.save();
     }
@@ -113,25 +114,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Epic epic) {
+    public void updateTask(Epic epic) throws ManagerGetException {
         super.updateTask(epic);
         this.save();
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws ManagerGetException {
         super.removeTask(id);
         this.save();
     }
 
     @Override
-    public void removeEpic(int id) {
+    public void removeEpic(int id) throws ManagerGetException {
         super.removeEpic(id);
         this.save();
     }
 
     @Override
-    public void removeSubtask(int id) {
+    public void removeSubtask(int id) throws ManagerGetException {
         super.removeSubtask(id);
         this.save();
     }

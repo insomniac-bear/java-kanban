@@ -4,6 +4,7 @@ import controllers.TaskManager;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerGetException;
 import utils.FileManager;
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.getDefault();
-        Task testTask1 = new Task("T0", "TD0", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
-        Task testTask2 = new Task("T1", "TD1", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        Task testTask1 = new Task("T0", "TD0", LocalDateTime.of(2025, 8, 1, 0, 0, 0), Duration.of(10, ChronoUnit.MINUTES));
+        Task testTask2 = new Task("T1", "TD1", LocalDateTime.of(2025, 8, 1, 0, 10, 0), Duration.of(10, ChronoUnit.MINUTES));
         Epic testEpic1 = new Epic("E1", "ED1");
         Epic testEpic2 = new Epic("E2", "ED2");
         taskManager.createTask(testTask1);
@@ -25,11 +26,11 @@ public class Main {
         taskManager.createEpic(testEpic1);
         taskManager.createEpic(testEpic2);
 
-        SubTask testSubTask1 = new SubTask("ST1", "STD1", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask testSubTask1 = new SubTask("ST1", "STD1", LocalDateTime.of(2025, 8, 1, 0, 20, 0), Duration.of(10, ChronoUnit.MINUTES));
         testSubTask1.setEpicId(testEpic1.getId());
-        SubTask testSubTask2 = new SubTask("ST2", "STD2", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask testSubTask2 = new SubTask("ST2", "STD2", LocalDateTime.of(2025, 8, 1, 0, 30, 0), Duration.of(10, ChronoUnit.MINUTES));
         testSubTask2.setEpicId(testEpic1.getId());
-        SubTask testSubTask3 = new SubTask("ST3", "STD3", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask testSubTask3 = new SubTask("ST3", "STD3", LocalDateTime.of(2025, 8, 1, 0, 40, 0), Duration.of(10, ChronoUnit.MINUTES));
         testSubTask3.setEpicId(testEpic1.getId());
 
         taskManager.createSubtask(testSubTask1);
@@ -63,8 +64,8 @@ public class Main {
         File data = FileManager.getFile("data.csv");
         FileBackedTaskManager backedTaskManager = Managers.getDefaultFileBackedTaskManager(data);
 
-        Task fbTask1 = new Task("fbT0", "fbTD0", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
-        Task fbTask2 = new Task("fbT1", "fbTD1", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        Task fbTask1 = new Task("fbT0", "fbTD0", LocalDateTime.of(2025, 8, 1, 0, 50, 0), Duration.of(10, ChronoUnit.MINUTES));
+        Task fbTask2 = new Task("fbT1", "fbTD1", LocalDateTime.of(2025, 8, 1, 1, 0, 0), Duration.of(10, ChronoUnit.MINUTES));
         Epic fbEpic1 = new Epic("fbE1", "fbED1");
         Epic fbEpic2 = new Epic("fbE2", "fbED2");
         backedTaskManager.createTask(fbTask1);
@@ -72,11 +73,11 @@ public class Main {
         backedTaskManager.createEpic(fbEpic1);
         backedTaskManager.createEpic(fbEpic2);
 
-        SubTask fbSubTask1 = new SubTask("ST1", "STD1", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask fbSubTask1 = new SubTask("ST1", "STD1", LocalDateTime.of(2025, 8, 1, 1, 10, 0), Duration.of(10, ChronoUnit.MINUTES));
         fbSubTask1.setEpicId(fbEpic1.getId());
-        SubTask fbSubTask2 = new SubTask("ST2", "STD2", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask fbSubTask2 = new SubTask("ST2", "STD2", LocalDateTime.of(2025, 8, 1, 1, 20, 0), Duration.of(10, ChronoUnit.MINUTES));
         fbSubTask2.setEpicId(fbEpic1.getId());
-        SubTask fbSubTask3 = new SubTask("ST3", "STD3", LocalDateTime.now(), Duration.of(10, ChronoUnit.MINUTES));
+        SubTask fbSubTask3 = new SubTask("ST3", "STD3", LocalDateTime.of(2025, 8, 1, 1, 30, 0), Duration.of(10, ChronoUnit.MINUTES));
         fbSubTask3.setEpicId(fbEpic2.getId());
 
         backedTaskManager.createSubtask(fbSubTask1);
@@ -90,7 +91,7 @@ public class Main {
         printAllTasks(backedTaskManager);
     }
 
-    private static void printAllTasks(TaskManager manager) {
+    private static void printAllTasks(TaskManager manager) throws ManagerGetException {
         System.out.println("Задачи:");
         for (Task task : manager.getTasks()) {
             System.out.println(task);

@@ -3,6 +3,7 @@ package controllers;
 import entities.Epic;
 import entities.SubTask;
 import entities.Task;
+import exceptions.ManagerGetException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldAddTaskInHistory() {
+    void shouldAddTaskInHistory() throws ManagerGetException {
         taskManager.createTask(task);
         taskManager.getTask(0);
         List<Task> history = taskManager.getHistory();
@@ -39,7 +40,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldHaveOnlyOneUniqueTaskInHistory() {
+    void shouldHaveOnlyOneUniqueTaskInHistory() throws ManagerGetException {
         taskManager.createTask(task);
         for (int i = 0; i < 3; i++) {
             taskManager.getTask(0);
@@ -49,7 +50,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldHaveTwoTasksInHistory() {
+    void shouldHaveTwoTasksInHistory() throws ManagerGetException {
         taskManager.createTask(task);
         taskManager.createEpic(epic);
         subTask.setEpicId(epic.getId());
@@ -61,7 +62,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldHaveOneTasksInHistoryAfterDeleteFirstHistoryItem() {
+    void shouldHaveOneTasksInHistoryAfterDeleteFirstHistoryItem() throws ManagerGetException {
         taskManager.createTask(task);
         taskManager.createEpic(epic);
         subTask.setEpicId(epic.getId());
